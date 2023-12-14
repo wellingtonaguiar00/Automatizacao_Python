@@ -1,0 +1,40 @@
+import os
+import openpyxl
+
+def obter_nome_cnpj_da_planilha(planilha, linha):
+    
+    nome_empresa = planilha.cell(row=linha, column=1).value
+    cnpj_empresa = str(planilha.cell(row=linha, column=2).value) 
+    return nome_empresa, cnpj_empresa
+
+def alterar_nome_pasta(caminho_pasta, novo_nome):
+    os.rename(caminho_pasta, novo_nome)
+
+def main():
+    pasta_raiz = r'C:\Users\danie\Documents\###CND'  
+    planilha_nome = r'Pasta1.xlsx'  
+
+    planilha_caminho = os.path.join(pasta_raiz, planilha_nome)
+
+    if os.path.exists(planilha_caminho):
+        
+        workbook = openpyxl.load_workbook(planilha_caminho)
+        planilha = workbook.active
+
+        
+        for linha in range(2, planilha.max_row + 1):
+            nome_empresa, cnpj_empresa = obter_nome_cnpj_da_planilha(planilha, linha)
+
+            
+            caminho_pasta = os.path.join(pasta_raiz, cnpj_empresa)
+
+            
+            if os.path.exists(caminho_pasta):
+                novo_nome_pasta = os.path.join(pasta_raiz, f'{nome_empresa}_{cnpj_empresa}')
+                alterar_nome_pasta(caminho_pasta, novo_nome_pasta)
+
+        
+        workbook.close()
+
+if __name__ == "__main__":
+    main()
